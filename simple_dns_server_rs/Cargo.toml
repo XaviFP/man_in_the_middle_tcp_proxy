@@ -1,0 +1,16 @@
+[package]
+name = "simple_dns_server_rs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1.68"
+futures = "0.3.28"
+trust-dns-client = "0.22.0"
+trust-dns-proto = "0.22.0"
+trust-dns-server = "0.22.0"
+trust-dns-resolver = "0.22.0"
+tokio = {version = "1.23.0", features = ["full"]}
+argh = "0.1.10"
