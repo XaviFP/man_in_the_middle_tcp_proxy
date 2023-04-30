@@ -115,17 +115,19 @@ async fn proxy() -> io::Result<()> {
                     if bytes_read == 0 {
                         continue;
                     }
-                    _ = c2s_logger.write(&buf[..bytes_read]).await;
+                    _ = c2s_logger.write_all(&buf[..bytes_read]).await;
                     _ = c2s_logger.flush().await;
 
-                    match server_writer.write(&buf[..bytes_read]).await {
+                    match server_writer.write_all(&buf[..bytes_read]).await {
                         Err(_) => {
                             _ = c2s_logger.write(b"\n\nServer connection closed\n\n").await;
                             _ = c2s_logger.flush().await;
                             _ = server_writer.shutdown().await;
                             return;
                         }
-                        Ok(_) => {}
+                        Ok(_) => {
+                            _ = server_writer.flush().await;
+                        }
                     }
                 }
             };
@@ -146,17 +148,19 @@ async fn proxy() -> io::Result<()> {
                     if bytes_read == 0 {
                         continue;
                     }
-                    _ = s2c_logger.write(&buf[..bytes_read]).await;
+                    _ = s2c_logger.write_all(&buf[..bytes_read]).await;
                     _ = s2c_logger.flush().await;
 
-                    match client_writer.write(&buf[..bytes_read]).await {
+                    match client_writer.write_all(&buf[..bytes_read]).await {
                         Err(_) => {
                             _ = s2c_logger.write(b"\n\nClient connection closed\n\n").await;
                             _ = s2c_logger.flush().await;
                             _ = client_writer.shutdown().await;
                             return;
                         }
-                        Ok(_) => {}
+                        Ok(_) => {
+                            _ = client_writer.flush().await;
+                        }
                     }
                 }
             };
